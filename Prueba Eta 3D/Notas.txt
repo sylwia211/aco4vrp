@@ -1,0 +1,3 @@
+Falta actualizar la feromona
+Definir el peso para la feromona y la información heurística
+Evaporación
