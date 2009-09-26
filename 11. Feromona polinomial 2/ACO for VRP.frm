@@ -1,15 +1,32 @@
 VERSION 5.00
 Begin VB.Form Form1 
    Caption         =   "ACO for VRP [0,1]"
-   ClientHeight    =   7650
+   ClientHeight    =   8745
    ClientLeft      =   60
    ClientTop       =   450
    ClientWidth     =   4710
    DrawStyle       =   1  'Dash
    LinkTopic       =   "Form1"
-   ScaleHeight     =   7650
+   ScaleHeight     =   8745
    ScaleWidth      =   4710
    StartUpPosition =   3  'Windows Default
+   Begin VB.CheckBox Check1 
+      Caption         =   "Muestras???"
+      BeginProperty Font 
+         Name            =   "Viner Hand ITC"
+         Size            =   12
+         Charset         =   0
+         Weight          =   700
+         Underline       =   0   'False
+         Italic          =   0   'False
+         Strikethrough   =   0   'False
+      EndProperty
+      Height          =   495
+      Left            =   240
+      TabIndex        =   16
+      Top             =   4920
+      Width           =   4215
+   End
    Begin VB.ComboBox Combo1 
       BeginProperty Font 
          Name            =   "Viner Hand ITC"
@@ -28,7 +45,7 @@ Begin VB.Form Form1
       TabIndex        =   11
       Text            =   "Todos"
       ToolTipText     =   "Lista de problemas"
-      Top             =   5040
+      Top             =   5760
       Width           =   1095
    End
    Begin VB.CommandButton Command1 
@@ -45,7 +62,7 @@ Begin VB.Form Form1
       Height          =   615
       Left            =   600
       TabIndex        =   5
-      Top             =   6720
+      Top             =   7440
       Width           =   3495
    End
    Begin VB.Frame Frame1 
@@ -256,7 +273,7 @@ Begin VB.Form Form1
       Left            =   600
       MaskColor       =   &H0080FF80&
       TabIndex        =   1
-      Top             =   5760
+      Top             =   6480
       Width           =   3495
    End
    Begin VB.Label Label5 
@@ -273,7 +290,7 @@ Begin VB.Form Form1
       Height          =   375
       Left            =   360
       TabIndex        =   10
-      Top             =   5040
+      Top             =   5760
       Width           =   2895
    End
    Begin VB.Label Label1 
@@ -301,12 +318,94 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = False
+Private Sub Check1_Click()
+If Check1.Value = 1 Then
+    Text1.Enabled = False
+    Text2.Enabled = False
+    Text3.Enabled = False
+    Text4.Enabled = False
+    Text5.Enabled = False
+Else
+    Text1.Enabled = True
+    Text2.Enabled = True
+    Text3.Enabled = True
+    Text4.Enabled = True
+    Text5.Enabled = True
+End If
+End Sub
+
 Private Sub Command1_Click()
 End
 End Sub
 
 
 Private Sub Execution_Click()
+
+Dim I1 As Integer
+Dim I2 As Integer
+Dim I3 As Integer
+Dim I4 As Integer
+Dim I5 As Integer
+Dim I6 As Integer
+
 'Procedimiento Principal
-Call Aco
+Samples = 0
+If Check1.Value = 1 Then
+    For I1 = 1 To 6 'Ciclo para el número de generaciones
+        If I1 = 1 Then
+            nGen = 1
+            nAnts = 500
+        ElseIf I1 = 2 Then
+            nGen = 500
+            nAnts = 1
+        ElseIf I1 = 3 Then
+            nGen = 10
+            nAnts = 50
+        ElseIf I1 = 4 Then
+            nGen = 50
+            nAnts = 10
+        ElseIf I1 = 5 Then
+            nGen = 20
+            nAnts = 25
+        Else
+            nGen = 25
+            nAnts = 20
+        End If
+        For I2 = 1 To 1 'Ciclo para el número de hormigas
+            For I3 = 1 To 5 'Ciclo para el peso (weight)
+                If I3 = 1 Then
+                    Weight = 1
+                ElseIf I3 = 2 Then
+                    Weight = 0.75
+                ElseIf I3 = 3 Then
+                    Weight = 0.5
+                ElseIf I3 = 4 Then
+                    Weight = 0.25
+                Else
+                    Weight = 0
+                End If
+                For I4 = 1 To 4 'Ciclo para la evaporación (Rho)
+                    If I4 = 1 Then
+                        Rho = 1
+                    ElseIf I4 = 2 Then
+                        Rho = 0.8
+                    ElseIf I4 = 3 Then
+                        Rho = 0.5
+                    Else
+                        Rho = 0
+                    End If
+                    For I5 = 1 To 1 ' Ciclo para la potencia del polinomio
+                        p = I5
+                        For I6 = 1 To 5 'Ciclo para el número de muestras
+                            Samples = I6
+                            Call Aco
+                        Next I6
+                    Next I5
+                Next I4
+            Next I3
+        Next I2
+    Next I1
+Else
+    Call Aco
+End If
 End Sub

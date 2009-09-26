@@ -39,6 +39,7 @@ Public Random As Double             'Variable auxiliar para el uso de números al
 Public Rho As Single
 Public Route() As Issues
 Public RouteAnt() As Issues
+Public Samples As Integer           'Indica la muestra
 Public Save() As Double             'Ahorros
 Public Second() As Double           'Copia de first antes de eliminar los nodos que no disminuyen la distancia promedio recorrida
 Public Sol As Integer               'Variable indicadora para la generación de la solución

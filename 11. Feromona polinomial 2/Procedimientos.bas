@@ -52,6 +52,8 @@ If Problem = "Todos" Then
 Else
     Time = Timer
     Call SingleVRP
+    
+    Call SingleMultiPrint
 End If
 
 MsgBox "I finished!!!!"
@@ -562,11 +564,17 @@ Sub MultiPrint()
 
 Dim I1 As Integer
 
-Open App.Path & "\Resultados\Summary Iter=" & nGen & " nAnts=" & nAnts & " Weight=" & Weight & " Rho=" & Rho & ".txt" For Output As #3
+Open App.Path & "\Resultados\Summary Iter=" & nGen & " nAnts=" & nAnts & " Weight=" & Weight & " Rho=" & Rho & " Sample=" & Samples & ".xls" For Output As #3
+If Form1.Check1.Value = False Then
 Print #3, vbTab & "Costo" & vbTab & "Iter." & vbTab & "Tiempo"
 For I1 = 1 To 14
     Print #3, I1 & vbTab & Int(Final(I1).Covered * 100) / 100 & vbTab & Final(I1).Nv & vbTab & Int(Final(I1).Time * 1000) / 1000
 Next I1
+Else
+For I1 = 1 To 14
+    Print #3, Int(Final(I1).Covered * 100) / 100
+Next I1
+End If
 Close #3
 
 End Sub
@@ -691,11 +699,13 @@ Dim J As Integer
 Dim K As Integer
 
 'Parámetros
-nGen = Val(Form1.Text1)
-nAnts = Val(Form1.Text2)
-Rho = Val(Form1.Text3)
-Weight = Val(Form1.Text4)
-p = Val(Form1.Text5)
+If Form1.Check1.Value = 0 Then
+    nGen = Val(Form1.Text1)
+    nAnts = Val(Form1.Text2)
+    Rho = Val(Form1.Text3)
+    Weight = Val(Form1.Text4)
+    p = Val(Form1.Text5)
+End If
 
 'Dimensión de la solución
 ReDim Eta(0 To Nodes, 0 To Nodes, 0 To Nodes)
@@ -876,14 +886,40 @@ Next I
 End Sub
 
 
+Sub SingleMultiPrint()
+
+Dim I1 As Integer
+
+If Form1.Check1.Value = 1 Then
+    Open App.Path & "\Resultados\Summary " & Problem & " Iter=" & nGen & " nAnts=" & nAnts & " Weight=" & Weight & " Rho=" & Rho & " Sample=" & Samples & ".xls" For Output As #3
+    Print #3, Int(BestRoute(0).Covered * 100) / 100
+    Close #3
+End If
+
+End Sub
+
+
 Sub SinglePrint()
 
 Dim I1 As Integer
 Dim I2 As Integer
 Dim Text As String
+'Dim File1 As Excel.Application
+'Dim File2 As Excel.Application
+'Dim Sheet1 As Excel.Worksheet
+'Dim Sheet2 As Excel.Worksheet
 
-Open App.Path & "\Resultados\Solve " & Problem & ".txt" For Output As #2
-Open App.Path & "\Resultados\Summary " & Problem & ".txt" For Output As #3
+'Set File1 = New Excel.Application
+'File1.Workbooks.Open App.Path & "\Resultados\Solve " & Problem & "Sample=" & Samples & ".xls"
+
+'Set File2 = New Excel.Application
+'File2.Workbooks.Open App.Path & "\Resultados\Summary " & Problem & "Sample=" & Samples & ".xls"
+
+Open App.Path & "\Resultados\Solve " & Problem & "Sample=" & Samples & ".xls" For Output As #2
+Open App.Path & "\Resultados\Summary " & Problem & "Sample=" & Samples & ".xls" For Output As #3
+
+'Set Sheet1 = File1.Sheets(1)
+'Set Sheet2 = File2.Sheets(1)
 
 I2 = 1
 Print #2, "Costo de la solución:"

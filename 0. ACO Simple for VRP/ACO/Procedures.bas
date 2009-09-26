@@ -123,7 +123,7 @@ For l = 1 To Nodes
 Next l
 
 Do
-k = 1
+'k = 1
     For k = 1 To Nodes
         If Assigned(k) = False Then
             Probability = Probability + ((((Tao(Chosen, k)) ^ Alpha) * ((Eta(Chosen, k)) ^ Beta)) / Sum)
