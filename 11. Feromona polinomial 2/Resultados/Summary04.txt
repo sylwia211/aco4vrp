@@ -1,0 +1,4 @@
+Iteraciones:   1 
+
+Costo         Vehículos     Tiempo [seg]
+ 1291,001      14            37,563 
