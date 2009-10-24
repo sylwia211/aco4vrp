@@ -64,6 +64,8 @@ Sub Ant()
 
 'Contadores y variables locales
 Dim I As Integer
+Dim J As Integer
+Dim Prod As Double
 
 'Inicializacion de la variable solucion
 Nv = 1
@@ -118,8 +120,21 @@ Do While Sol < Nodes
         'Sum = denominador para el calculo de probabilidades
         Sum = 0
         For I = 1 To Nodes
-            If Eta(First(I), Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0))) <> 0 Then
-                Sum = Sum + ((Weight * Tao(Furthest, I)) + ((1 - Weight) * Eta(First(I), Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0)))))
+            If Eta(First(I), Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0))) <> 0 And Assigned(I) = False Then
+                Prod = 1
+                For J = Route(Nv - 1).Ctrl + 1 To Route(Nv).Ctrl - 2
+                    Prod = Prod * Tao(Solution(J), Solution(J + 1)) ^ (1 / (Route(Nv).Ctrl - Route(Nv - 1).Ctrl - 1))
+                Next J
+                If Solution(Eta(I, 0, 0) - 1) * Solution(Eta(I, 0, 0)) <> 0 Then
+                    Prod = Prod / Tao(Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0))) ^ (1 / (Route(Nv).Ctrl - Route(Nv - 1).Ctrl - 1))
+                End If
+                If Solution(Eta(I, 0, 0) - 1) <> 0 Then
+                    Prod = Prod * Tao(Solution(Eta(I, 0, 0) - 1), I) ^ (1 / (Route(Nv).Ctrl - Route(Nv - 1).Ctrl - 1))
+                End If
+                If Solution(Eta(I, 0, 0)) <> 0 Then
+                    Prod = Prod * Tao(Solution(Eta(I, 0, 0)), I) ^ (1 / (Route(Nv).Ctrl - Route(Nv - 1).Ctrl - 1))
+                End If
+                Sum = Sum + ((Weight * Prod) + ((1 - Weight) * Eta(First(I), Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0)))))
             End If
         Next I
         
@@ -132,8 +147,21 @@ Do While Sol < Nodes
             
             'Seleccion de un nodo para la ruta
             For I = 1 To Nodes
-                If Eta(First(I), Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0))) <> 0 Then
-                    Prob = Prob + (((Weight * Tao(Furthest, I)) + ((1 - Weight) * Eta(First(I), Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0))))) / Sum)     'Probabilidad acumulada
+            If Eta(First(I), Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0))) <> 0 And Assigned(I) = False Then
+                    Prod = 1
+                    For J = Route(Nv - 1).Ctrl + 1 To Eta(I, 0, 0) - 2
+                        Prod = Prod * Tao(Solution(J), Solution(J + 1))
+                    Next J
+                    For J = Eta(I, 0, 0) To Route(Nv).Ctrl - 2
+                        Prod = Prod * Tao(Solution(J), Solution(J + 1))
+                    Next J
+                    If Solution(Eta(I, 0, 0) - 1) <> 0 Then
+                        Prod = Prod * Tao(Solution(Eta(I, 0, 0) - 1), I)
+                    End If
+                    If Solution(Eta(I, 0, 0)) <> 0 Then
+                        Prod = Prod * Tao(Solution(Eta(I, 0, 0)), I)
+                    End If
+                    Prob = Prob + (((Weight * Prod ^ (1 / (Route(Nv).Ctrl - Route(Nv - 1).Ctrl - 1))) + ((1 - Weight) * Eta(First(I), Solution(Eta(I, 0, 0) - 1), Solution(Eta(I, 0, 0))))) / Sum)     'Probabilidad acumulada
                     If Prob > Random Then
                         If Assigned(I) = False Then
                             If Route(Nv).Cused + Dem(I) <= Capv Then
